@@ -1,0 +1,104 @@
+\documentclass[twocolumn]{article}
+
+\usepackage{geometry}
+\geometry{a4paper, scale=0.8}
+\usepackage{hyperref}
+\usepackage{tocloft}
+\hypersetup{colorlinks=true}
+
+\newcounter{termcounter}
+\newcommand{\listtermsname}{Glossary}
+\newlistof{terms}{trm}{\listtermsname}
+\newenvironment{term}[1]{%
+	\refstepcounter{termcounter}%
+	\par\vspace{0.5\baselineskip}  % Add some vertical space before each term
+	\noindent\textbf{Term \thetermcounter:} \textbf{#1}\label{term:#1}%
+	\addcontentsline{trm}{terms}{\protect\numberline{\thetermcounter}#1}%
+	\par\nopagebreak\vspace{0.3\baselineskip}  % Small space after the term title
+	\noindent\ignorespaces  % Ensure no indentation for the definition
+}{%
+	\par\vspace{0.5\baselineskip}  % Add some vertical space after each term
+}
+
+\newcommand{\termref}[1]{\hyperref[term:#1]{#1} (Term \ref{term:#1})}
+
+\title{GITCG Universal Protocol V1.0}
+\author{Tomorrowdawn}
+\date{\today}
+
+
+\begin{document}
+	\maketitle
+\section{Introduction}
+
+GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
+ definition of game Genius Invokation TCG \footnote{https://en.wikipedia.org/wiki/Genius\_Invokation\_TCG}. GIUP is committed to creating a universal, transferable definition of situations and actions for GITCG. GIUP isn't a rulebook for GITCG - it's not trying to be the boss here. Instead, GIUP's goal is to describe the current state of play in GITCG and the potential action space, without getting tangled up in how different elements interact. So, we claim it  \textit{descriptive}.
+ 
+ \section{Terminology}
+ 
+ This section will introduce the key terms in GITCG and provide precise definitions.
+ 
+ \begin{term}{Player}
+ 	GIUP uses a number starting from zero to represent players. In the basic version, there are only two options: 0 or 1. In the extended version, there will be other options, such as a random player (2).
+ \end{term}
+
+\begin{term}{Current Player}
+	Current Player represents the one who can take an action at now.
+\end{term}
+	
+\begin{term}{Round}
+	It is exactly same as Round in the game.
+\end{term}
+
+\begin{term}{Turn}
+	When current player changes from 0 to 1 or 1 to 0, Turn +1. At the beginning of each Round, Turn is set to 1.
+	
+	This definition already takes special cases into account. 
+\end{term}
+	
+\begin{term}{Element}
+	Elements are:
+	\begin{enumerate}
+		\item[0.] Omni (also Empty for aura)
+		\item Pyro
+		\item Hydro
+		\item Electro
+		\item Cryo
+		\item Dendro
+		\item Anemo
+		\item Geo
+	\end{enumerate}
+\end{term}
+
+\begin{term}{Damage Type}
+	Damage Types not only include \termref{Element}, but also two additional options: piercing and physical. Omni damage has no practical meaning here.
+\end{term}
+
+\begin{term}{Energy}
+	Energy is a number.
+\end{term}
+
+\begin{term}{Dice}
+	Dice, is a two-element tuple: (\termref{Element} or Black or White, Number)
+	
+	We use term \textbf{Elemental Dice}\label{Elemental Dice} to refer dice with concrete \termref{Element}.
+\end{term}
+
+\begin{term}{Skill}
+	A skill consists of 
+	\begin{enumerate}
+		\item Skill Name. An identifier(string or int).
+		\item \termref{Damage Type}.
+		\item \termref{Energy}.
+		\item A list of required \termref{Dice}.
+	\end{enumerate}
+\end{term}
+
+
+
+
+\clearpage
+\listofterms
+
+	
+\end{document}
