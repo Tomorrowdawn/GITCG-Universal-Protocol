@@ -75,27 +75,147 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 \end{term}
 
 \begin{term}{Energy}
-	Energy is a number.
+	Energy is a non-negative integer.
 \end{term}
 
 \begin{term}{Dice}
-	Dice, is a two-element tuple: (\termref{Element} or Black or White, Number)
+	Dice is a pair: (\termref{Element} or Black or White, Number)
 	
 	We use term \textbf{Elemental Dice}\label{Elemental Dice} to refer dice with concrete \termref{Element}.
+\end{term}
+
+\begin{term}{Dice Pattern}
+	Dice Pattern is an unordered list of \termref{Dice}.
+	
+	An example is [\(Pyro, 1\), \(Black, 2\)], which is a typical setting for Normal Attack of Pyro character.
 \end{term}
 
 \begin{term}{Skill}
 	A skill consists of 
 	\begin{enumerate}
-		\item Skill Name. An identifier(string or int).
+		\item Skill Name. An identifier(string).
 		\item \termref{Damage Type}.
 		\item \termref{Energy}.
-		\item A list of required \termref{Dice}.
+		\item \termref{Dice Pattern}.
 	\end{enumerate}
 \end{term}
 
+\begin{term}{Usage}
+	Usage is a non-negative integer or positive infinity. It usually indicates how many times some effect can be triggered. For a permenant effect, it's positive infinity.
+\end{term}
 
+\begin{term}{Superscript}
+	Superscript is a \termref{Usage} annotated in the upper right corner of some entity in game.
+\end{term}
 
+\begin{term}{Subscript}
+	Subscript is a \termref{Usage} annotated in the lower right corner of some entity in game.
+\end{term}
+
+\begin{term}{Zone}
+	A Zone contains a name, a list of ordered components, and corresponding constraint rules. Components within a zone are necessarily identified by an index. Each unit's index is unique within its corresponding zone. 
+	
+	A Zone can also contain other Zones.
+\end{term}
+
+\begin{term}{Character Zone}
+	Character Zone consists of:
+	\begin{enumerate}
+		\item Player ID
+		\item K characters
+		\item Active character index
+	\end{enumerate}
+	
+	\begin{enumerate}
+		\item Each character can possess a set of equipment.
+		\item Each character has an aura. An aura is a list of \termref{Element}s. Omni represents none.
+		\item Each character has its own character status.
+		\item Each character has its own skill usage history.
+		\begin{enumerate}
+			\item This history describes how many times each skill (distinguished by skill name) has been used in the current round.
+			\item It also records how many times each skill has been used since the start of the game.
+		\end{enumerate}
+		\item The active character possesses an active status. The active status belongs to the Character Zone (not to the character).
+	\end{enumerate}
+\end{term}
+
+\begin{term}{Support Zone}
+	Support Zone consists of:
+	\begin{enumerate}
+		\item Player ID
+		\item Up to 4 ordered support entities
+	\end{enumerate}
+	
+	Each support entity contains a name and a \termref{Superscript}.
+\end{term}
+
+\begin{term}{Summon Zone}
+	Summon Zone consists of:
+	\begin{enumerate}
+		\item Player ID
+		\item Up to 4 ordered summons
+	\end{enumerate}
+	
+	Each summon contains a name, a \termref{Damage Type}, and a \termref{Superscript}.
+\end{term}
+
+\begin{term}{Dice Zone}
+	Dice Zone contains K \termref{Elemental Dice}. For the opponent, only K is visible information in the Dice Zone.
+\end{term}
+
+\begin{term}{Hand Zone}
+	Hand Zone consists of:
+	\begin{enumerate}
+		\item K cards in hand (maximum 10)
+		\item For the opponent, only K is visible information in the Hand Zone
+	\end{enumerate}
+	
+	Each card in hand includes a name, energy cost, and \termref{Elemental Dice}.
+\end{term}
+
+\begin{term}{Deck}
+	Deck consists of:
+	\begin{enumerate}
+		\item M face-down cards. Only God knows the internal order.
+		\item For the current player, the deck contains a list of pairs in the form (card name, position)
+		\begin{enumerate}
+			\item Position -1 indicates its position is unknown, or 0~M-1. 0 represents the bottom of the deck, M-1 represents the top of the deck.
+		\end{enumerate}
+	\end{enumerate}
+\end{term}
+
+\begin{term}{Card Graveyard}
+	Graveyard consists of:
+	\begin{enumerate}
+		\item Player ID
+		\item An ordered list of tuples (sorted by timing)
+	\end{enumerate}
+	
+	The tuple format is (card name, timing). Timing is a string in the format of "Round-Turn", indicating when the card was played.
+\end{term}
+
+\begin{term}{Global Identifier}
+	Each unit is determined by a route.
+\end{term}
+
+\begin{term}{Routing Rules}
+	Use "." for separation. The root path is the player ID, followed by the zone ID, then the target subscript (subscript within the zone). For most units, three-level addressing is sufficient. However, for active status and character-affiliated attributes, this is still not enough.
+	
+	\begin{enumerate}
+		\item Character Zone
+		\begin{enumerate}
+			\item[1.1] Character Zone
+			\begin{enumerate}
+				\item[1.1.x] A certain character
+				\begin{enumerate}
+					\item[1.1.x.1] Aura
+					\item[1.1.x.2] Equipment
+				\end{enumerate}
+			\end{enumerate}
+			\item[1.2] Active Status
+		\end{enumerate}
+	\end{enumerate}
+\end{term}
 
 \clearpage
 \listofterms
