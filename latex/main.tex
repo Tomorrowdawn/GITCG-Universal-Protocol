@@ -5,6 +5,7 @@
 \usepackage{hyperref}
 \usepackage{tocloft}
 \hypersetup{colorlinks=true}
+\usepackage{enumitem}
 
 \newcounter{termcounter}
 \newcommand{\listtermsname}{Glossary}
@@ -26,6 +27,8 @@
 \author{Tomorrowdawn}
 \date{\today}
 
+\newlist{entitylist}{enumerate}{1}
+\setlist[entitylist]{label=\arabic*.,start=0}
 
 \begin{document}
 	\maketitle
@@ -107,7 +110,7 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 \end{term}
 
 \begin{term}{Usage}
-	Usage is a non-negative integer or positive infinity. It usually indicates how many times some effect can be triggered. For a permenant effect, it's positive infinity.
+	Usage is a non-negative integer or positive infinity. It usually indicates how many times some effect can be triggered. For a permanent effect, it's positive infinity.
 \end{term}
 
 \begin{term}{Superscript}
@@ -119,25 +122,29 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 \end{term}
 
 \begin{term}{Zone}
-	A Zone contains:
+	A Zone consists of:
 	\begin{enumerate}
-		\item Name.
-		\item A list of Components. In some cases, for simplicity, the term for this Zone is equivalent to this list. Each component is a unit or another Zone.
+		\item Metadata. A collection of information that is not indexed by Route:
+		\begin{enumerate}
+			\item Name
+			\item Additional information specific to the Zone type
+		\end{enumerate}
+		\item Entity List. An ordered list of components that can be indexed by Route. Each component is either:
+		\begin{enumerate}
+			\item A Unit (any non-Zone entity)
+			\item Another Zone
+		\end{enumerate}
 	\end{enumerate}
-	
-	The definition of a unit is made by negation. Any entity that is not a Zone can be called a unit. \textit{This definition is subject to change.}
-	
-	If we say XX Zone but no further explanation, it means a list of XX.
-	
-	For most Zones, the ordering of its components are fixed or FIFO if it's variable.
+
+	The ordering of Entity List is significant as it determines the Route indices. Unless specified otherwise, the ordering is fixed or follows FIFO for variable-length lists.
 \end{term}
 
 \begin{term}{Equipment}
 	\begin{enumerate}
-	\item ID.
-	\item Description. Text.
-	\item Type. Weapon, Talent Artifact, Technique or Other.
-\end{enumerate}
+		\item ID.
+		\item Description. Text.
+		\item Type. Weapon, Talent, Artifact, Technique or Other.
+	\end{enumerate}
 \end{term}
 
 \begin{term}{Buff}
@@ -149,48 +156,87 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 \end{term}
 
 \begin{term}{Character}
+	A Character consists of:
 	\begin{enumerate}
-		\item ID.
-		\item \termref{HP}.
-		\item \termref{Energy}.
-		\item \termref{Equipment} \termref{Zone}. It has a special ordering rule, cards should be placed w.r.t their type order, same as listed in \termref{Equipment}.
-		\item \termref{Skill} \termref{Zone}.
-		\item \termref{Buff} \termref{Zone}.
+		\item Metadata:
+		\begin{enumerate}
+			\item ID
+			\item Aura (\termref{Element}). Empty by default
+			\item \termref{HP}
+			\item \termref{Energy}
+		\end{enumerate}
+		\item Entity List:
+		\begin{entitylist}
+			\item Equipment Zone (ordered by type: Weapon, Talent, Artifact, Technique, Other)
+			\item Skill Zone
+			\item Buff Zone
+		\end{entitylist}
 	\end{enumerate}
 \end{term}
 
 \begin{term}{Character Zone}
-	Character Zone consists of:
+	A Character Zone consists of:
 	\begin{enumerate}
-		\item Player ID
-		\item \termref{Buff} \termref{Zone}.
-		\item A list of \termref{Character}.
-		\item Active character index.
+		\item Metadata:
+		\begin{enumerate}
+			\item Player ID
+			\item Active character index
+		\end{enumerate}
+		\item Entity List: an ordered list of \termref{Character}
 	\end{enumerate}
 \end{term}
 
 \begin{term}{Support Zone}
-	Support Zone consists of:
+	A Support Zone consists of:
 	\begin{enumerate}
-		\item Player ID
-		\item Up to 4 ordered support entities
+		\item Metadata:
+		\begin{enumerate}
+			\item Player ID
+			\item Maximum capacity (4)
+		\end{enumerate}
+		\item Entity List: an ordered list of Support entities, where each Support entity contains:
+		\begin{enumerate}
+			\item Metadata:
+			\begin{enumerate}
+				\item Name
+				\item \termref{Subscript}
+				\item \termref{Superscript}
+			\end{enumerate}
+		\end{enumerate}
 	\end{enumerate}
-	
-	Each support entity contains a name, a \termref{Subscript} and a \termref{Superscript}.
 \end{term}
 
 \begin{term}{Summon Zone}
-	Summon Zone consists of:
+	A Summon Zone consists of:
 	\begin{enumerate}
-		\item Player ID
-		\item Up to 4 ordered summons
+		\item Metadata:
+		\begin{enumerate}
+			\item Player ID
+			\item Maximum capacity (4)
+		\end{enumerate}
+		\item Entity List: an ordered list of Summon entities, where each Summon entity contains:
+		\begin{enumerate}
+			\item Metadata:
+			\begin{enumerate}
+				\item Name
+				\item \termref{Damage Type}
+				\item \termref{Subscript}
+				\item \termref{Superscript}
+			\end{enumerate}
+		\end{enumerate}
 	\end{enumerate}
-	
-	Each summon contains a name, a \termref{Damage Type}, a \termref{Subscript} and a \termref{Superscript}.
 \end{term}
 
 \begin{term}{Dice Zone}
-	Dice Zone contains K \textbf{Elemental Dice}. For the opponent, only K is visible information in the Dice Zone.
+	A Dice Zone consists of:
+	\begin{enumerate}
+		\item Metadata:
+		\begin{enumerate}
+			\item \termref{Player}.
+			\item Count K.
+		\end{enumerate}
+		\item Entity List: an ordered list of \textbf{Elemental Dice}
+	\end{enumerate}
 \end{term}
 
 \begin{term}{Card}
@@ -203,39 +249,63 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 \end{term}
 
 \begin{term}{Hand Zone}
-	Hand Zone consists of:
+	A Hand Zone consists of:
 	\begin{enumerate}
-		\item A list of K \termref{Card} in hand (maximum 10).
-		\item For the opponent, only K is visible information in the Hand Zone
+		\item Metadata:
+		\begin{enumerate}
+			\item Count K.(10 maximum)
+		\end{enumerate}
+		\item Entity List: An ordered list of \termref{Card}
+
 	\end{enumerate}
 \end{term}
 
 \begin{term}{Pile}
-	Pile consists of:
+	A Pile consists of:
 	\begin{enumerate}
-		\item M face-down \termref{Card}. Only God knows the internal order.
-		\item For the current player, the pile contains a list of pairs in the form (card name, position)
+		\item Metadata:
 		\begin{enumerate}
-			\item Position -1 indicates its position is unknown, or 0\~{}M-1. 0 represents the top of the pile, M-1 represents the bottom of the pile.
+			\item \termref{Player}.
+			\item Count K.
+			\item A ordered list of positions(-1 for unknown, or 0 to M-1 from top to bottom)
 		\end{enumerate}
+		\item Entity List: an ordered list of \termref{Card}.
 	\end{enumerate}
 \end{term}
 
 \begin{term}{Player Area}
+	A Player Area consists of:
 	\begin{enumerate}
-		\item \termref{Character Zone}
-		\item \termref{Support Zone}
-		\item \termref{Summon Zone}
-		\item \termref{Dice Zone}
-		\item \termref{Hand Zone}
-		\item \termref{Pile}
-		\item \termref{Player}
-		\item Arcane Legend.
+		\item Metadata:
+		\begin{enumerate}
+			\item \termref{Player} ID
+			\item Arcane Legend status
+		\end{enumerate}
+		\item Entity List:
+		\begin{entitylist}
+			\item Character Zone
+			\item Team Buff Zone
+			\item Support Zone
+			\item Summon Zone
+			\item Dice Zone
+			\item Hand Zone
+			\item Pile
+		\end{entitylist}
 	\end{enumerate}
 \end{term}
 
 \begin{term}{Game}
-	A Game contains two \termref{Player Area} and a list of \termref{Player}.
+	A Game consists of:
+	\begin{enumerate}
+		\item Metadata:
+		\begin{enumerate}
+			\item List of \termref{Player}
+		\end{enumerate}
+		\item Entity List:
+		\begin{entitylist}
+			\item Two \termref{Player Area}
+		\end{entitylist}
+	\end{enumerate}
 \end{term}
 
 \begin{term}{Route}
@@ -246,6 +316,8 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 	For example, \texttt{0.2} refers to the Summon Zone of Player 0.
 	
 	\texttt{0.2.1} refers to the 2nd summon of Player 0.
+	\texttt{0.0.0} refers to the 1st character of Player 0.
+	\texttt{0.0.0.0.0} refers to the Weapon of the 1st character of Player 0.
 	
 	For cards in the pile , indices directly correspond to their actual order, but you typically shouldn't specify Cards in the pile directly by index unless you know their actual positions.
 	
