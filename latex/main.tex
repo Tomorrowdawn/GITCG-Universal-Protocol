@@ -301,10 +301,7 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 		\begin{enumerate}
 			\item List of \termref{Player}
 		\end{enumerate}
-		\item Entity List:
-		\begin{entitylist}
-			\item Two \termref{Player Area}
-		\end{entitylist}
+		\item Entity List: Two \termref{Player Area}
 	\end{enumerate}
 \end{term}
 
@@ -316,7 +313,9 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 	For example, \texttt{0.2} refers to the Summon Zone of Player 0.
 	
 	\texttt{0.2.1} refers to the 2nd summon of Player 0.
+	
 	\texttt{0.0.0} refers to the 1st character of Player 0.
+	
 	\texttt{0.0.0.0.0} refers to the Weapon of the 1st character of Player 0.
 	
 	For cards in the pile , indices directly correspond to their actual order, but you typically shouldn't specify Cards in the pile directly by index unless you know their actual positions.
@@ -336,6 +335,11 @@ The Game starts off with \termref{Player} 0. \termref{Current Player} can perfor
 
 	This definition is highly abstract because we declare GIUP to be descriptive. We will explain how it can be properly implemented to correctly execute normal GITCG operations. For example, when you want to play a card from your hand, you first need to use Select to choose that card, then repeatedly use Select to choose the corresponding dice, and finally use Confirm to execute. Since Route indexes all selectable entities, you can always complete the same operations as in GITCG through Select (just like clicking on your phone), and then finally execute it through Confirm. The definition itself doesn't involve these implementation details, so it is implementation-independent.
 \end{term}
+
+
+\section{View}
+
+To be continued...
 
 \section{Random Extension}
 
