@@ -34,7 +34,7 @@
 GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
  definition of game Genius Invokation TCG \footnote{https://en.wikipedia.org/wiki/Genius\_Invokation\_TCG}. GIUP is committed to creating a universal, transferable definition of situations and actions for GITCG. GIUP isn't a rulebook for GITCG - it's not trying to be the boss here. Instead, GIUP's goal is to describe the current state of play in GITCG and the potential action space, without getting tangled up in how different elements interact. So, we claim it  \textit{descriptive}.
  
- \section{Terminology}
+ \section{Basic Elements}
  
  This section will introduce the key terms in GITCG and provide precise definitions.
  
@@ -71,7 +71,13 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 \end{term}
 
 \begin{term}{Damage Type}
-	Damage Types not only include \termref{Element}, but also two additional options: piercing and physical. Omni damage has no practical meaning here.
+	Damage Types not only include \termref{Element}, but also three additional options: piercing, physical and healing. Omni damage has no practical meaning here.
+	
+	\textit{Healing is literally not a type of damage... but this definition makes life easier in many cases.}
+\end{term}
+
+\begin{term}{HP}
+	HP is a non-negative integer.
 \end{term}
 
 \begin{term}{Energy}
@@ -94,9 +100,9 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 	A skill consists of 
 	\begin{enumerate}
 		\item Skill Name. An identifier(string).
-		\item \termref{Damage Type}.
 		\item \termref{Energy}.
 		\item \termref{Dice Pattern}.
+		\item Type. Normal Attack, Elemental Skill or Elemental Burst.
 	\end{enumerate}
 \end{term}
 
@@ -113,29 +119,53 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 \end{term}
 
 \begin{term}{Zone}
-	A Zone contains a name, a list of ordered components, and corresponding constraint rules. Components within a zone are necessarily identified by an index. Each unit's index is unique within its corresponding zone. 
+	A Zone contains:
+	\begin{enumerate}
+		\item Name.
+		\item A list of Components. In some cases, for simplicity, the term for this Zone is equivalent to this list. Each component is a unit or another Zone.
+	\end{enumerate}
 	
-	A Zone can also contain other Zones.
+	The definition of a unit is made by negation. Any entity that is not a Zone can be called a unit. \textit{This definition is subject to change.}
+	
+	If we say XX Zone but no further explanation, it means a list of XX.
+	
+	For most Zones, the ordering of its components are fixed or FIFO if it's variable.
+\end{term}
+
+\begin{term}{Equipment}
+	\begin{enumerate}
+	\item ID.
+	\item Description. Text.
+	\item Type. Weapon, Talent Artifact, Technique or Other.
+\end{enumerate}
+\end{term}
+
+\begin{term}{Buff}
+	\begin{enumerate}
+		\item ID.
+		\item Text description.
+		\item \termref{Subscript}.
+	\end{enumerate}
+\end{term}
+
+\begin{term}{Character}
+	\begin{enumerate}
+		\item ID.
+		\item \termref{HP}.
+		\item \termref{Energy}.
+		\item \termref{Equipment} \termref{Zone}. It has a special ordering rule, cards should be placed w.r.t their type order, same as listed in \termref{Equipment}.
+		\item \termref{Skill} \termref{Zone}.
+		\item \termref{Buff} \termref{Zone}.
+	\end{enumerate}
 \end{term}
 
 \begin{term}{Character Zone}
 	Character Zone consists of:
 	\begin{enumerate}
 		\item Player ID
-		\item K characters
-		\item Active character index
-	\end{enumerate}
-	
-	\begin{enumerate}
-		\item Each character can possess a set of equipment.
-		\item Each character has an aura. An aura is a list of \termref{Element}s. Omni represents none.
-		\item Each character has its own character status.
-		\item Each character has its own skill usage history.
-		\begin{enumerate}
-			\item This history describes how many times each skill (distinguished by skill name) has been used in the current round.
-			\item It also records how many times each skill has been used since the start of the game.
-		\end{enumerate}
-		\item The active character possesses an active status. The active status belongs to the Character Zone (not to the character).
+		\item \termref{Buff} \termref{Zone}.
+		\item A list of \termref{Character}.
+		\item Active character index.
 	\end{enumerate}
 \end{term}
 
@@ -146,7 +176,7 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 		\item Up to 4 ordered support entities
 	\end{enumerate}
 	
-	Each support entity contains a name and a \termref{Superscript}.
+	Each support entity contains a name, a \termref{Subscript} and a \termref{Superscript}.
 \end{term}
 
 \begin{term}{Summon Zone}
@@ -156,66 +186,96 @@ GITCG Universal Protocol, also known as \textit{GIUP}, is a descriptive
 		\item Up to 4 ordered summons
 	\end{enumerate}
 	
-	Each summon contains a name, a \termref{Damage Type}, and a \termref{Superscript}.
+	Each summon contains a name, a \termref{Damage Type}, a \termref{Subscript} and a \termref{Superscript}.
 \end{term}
 
 \begin{term}{Dice Zone}
-	Dice Zone contains K \termref{Elemental Dice}. For the opponent, only K is visible information in the Dice Zone.
+	Dice Zone contains K \textbf{Elemental Dice}. For the opponent, only K is visible information in the Dice Zone.
+\end{term}
+
+\begin{term}{Card}
+	\begin{enumerate}
+		\item ID.
+		\item Text description.
+		\item \termref{Energy}.
+		\item \termref{Dice Pattern}.
+	\end{enumerate}
 \end{term}
 
 \begin{term}{Hand Zone}
 	Hand Zone consists of:
 	\begin{enumerate}
-		\item K cards in hand (maximum 10)
+		\item A list of K \termref{Card} in hand (maximum 10).
 		\item For the opponent, only K is visible information in the Hand Zone
 	\end{enumerate}
-	
-	Each card in hand includes a name, energy cost, and \termref{Elemental Dice}.
 \end{term}
 
-\begin{term}{Deck}
-	Deck consists of:
+\begin{term}{Pile}
+	Pile consists of:
 	\begin{enumerate}
-		\item M face-down cards. Only God knows the internal order.
-		\item For the current player, the deck contains a list of pairs in the form (card name, position)
+		\item M face-down \termref{Card}. Only God knows the internal order.
+		\item For the current player, the pile contains a list of pairs in the form (card name, position)
 		\begin{enumerate}
-			\item Position -1 indicates its position is unknown, or 0~M-1. 0 represents the bottom of the deck, M-1 represents the top of the deck.
+			\item Position -1 indicates its position is unknown, or 0\~{}M-1. 0 represents the top of the pile, M-1 represents the bottom of the pile.
 		\end{enumerate}
 	\end{enumerate}
 \end{term}
 
-\begin{term}{Card Graveyard}
-	Graveyard consists of:
+\begin{term}{Player Area}
 	\begin{enumerate}
-		\item Player ID
-		\item An ordered list of tuples (sorted by timing)
-	\end{enumerate}
-	
-	The tuple format is (card name, timing). Timing is a string in the format of "Round-Turn", indicating when the card was played.
-\end{term}
-
-\begin{term}{Global Identifier}
-	Each unit is determined by a route.
-\end{term}
-
-\begin{term}{Routing Rules}
-	Use "." for separation. The root path is the player ID, followed by the zone ID, then the target subscript (subscript within the zone). For most units, three-level addressing is sufficient. However, for active status and character-affiliated attributes, this is still not enough.
-	
-	\begin{enumerate}
-		\item Character Zone
-		\begin{enumerate}
-			\item[1.1] Character Zone
-			\begin{enumerate}
-				\item[1.1.x] A certain character
-				\begin{enumerate}
-					\item[1.1.x.1] Aura
-					\item[1.1.x.2] Equipment
-				\end{enumerate}
-			\end{enumerate}
-			\item[1.2] Active Status
-		\end{enumerate}
+		\item \termref{Character Zone}
+		\item \termref{Support Zone}
+		\item \termref{Summon Zone}
+		\item \termref{Dice Zone}
+		\item \termref{Hand Zone}
+		\item \termref{Pile}
+		\item \termref{Player}
+		\item Arcane Legend.
 	\end{enumerate}
 \end{term}
+
+\begin{term}{Game}
+	A Game contains two \termref{Player Area} and a list of \termref{Player}.
+\end{term}
+
+\begin{term}{Route}
+	Each unit/Zone is indexed by a unique route.
+	
+	A Route is a series of indices separated by dots. It starts from \termref{Game} and goes down until reaching the \termref{Zone}/Unit you want to specify. 
+	
+	For example, \texttt{0.2} refers to the Summon Zone of Player 0.
+	
+	\texttt{0.2.1} refers to the 2nd summon of Player 0.
+	
+	For cards in the pile , indices directly correspond to their actual order, but you typically shouldn't specify Cards in the pile directly by index unless you know their actual positions.
+	
+	In implementation, we recommend binding the corresponding Route to all entities that have been described. This can also be referred to as their Address in the game.
+\end{term}
+
+\section{Game Flow}
+
+The Game starts off with \termref{Player} 0. \termref{Current Player} can perform Actions. The rule of player switch is out of the scope of GIUP.
+
+\begin{term}{Action}
+	\begin{enumerate}
+		\item Type. Select, End, Confirm, Surrender.
+		\item Route. The target's route which is selected. None for other types of actions.
+	\end{enumerate}
+
+	This definition is highly abstract because we declare GIUP to be descriptive. We will explain how it can be properly implemented to correctly execute normal GITCG operations. For example, when you want to play a card from your hand, you first need to use Select to choose that card, then repeatedly use Select to choose the corresponding dice, and finally use Confirm to execute. Since Route indexes all selectable entities, you can always complete the same operations as in GITCG through Select (just like clicking on your phone), and then finally execute it through Confirm. The definition itself doesn't involve these implementation details, so it is implementation-independent.
+\end{term}
+
+\section{Random Extension}
+
+This section we introduce a random player and describe how to control the random events. This extension is denoted as GIUP-R.
+
+\begin{term}{Random Player}
+	We use -1 to refer to this random player.
+	
+	After the execution of Confirm \termref{Action}, \termref{Current Player} is changed to -1.
+\end{term}
+
+Since the rules for action execution are beyond the scope of GIUP, we need to additionally state here how to properly implement the random player to control random events. For instance, when Player 0 needs to draw cards, the Current Player will be switched to Random Player, and the Random Player decides which cards are drawn. This extension will be supplemented later to cover possible Random Player actions. The most significant benefit of doing this is that players can make predictions by controlling the random player - for example, players can calculate optimal strategies by assuming which cards the opponent holds(assume random player has an action: SetOppoHand).
 
 \clearpage
 \listofterms
